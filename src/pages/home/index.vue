@@ -21,14 +21,20 @@
   </div>
 </template>
 
+<script lang="ts">
+export default {
+  name: 'VHome'
+}
+</script>
+
 <script setup lang="ts">
 import { useQuery } from 'vue-query'
 import Web3 from 'web3'
 
 const address = ref(import.meta.env.VITE_ADDRESS)
 const displayAddress = computed(() => {
-  if (!address.value) return ''
-  return `${address.value.slice(0, 5)}...${address.value.slice(-3)}`
+  const val = address.value
+  return val ? `${val.slice(0, 5)}...${val.slice(-3)}` : ''
 })
 const privateKey  = ref(import.meta.env.VITE_PRIVATE_KEY)
 const web3 = new Web3(import.meta.env.VITE_PROVIDER)
@@ -47,8 +53,8 @@ function useTotalQuery() {
 const { status, data: total, error, isFetching} = useTotalQuery()
 
 const displayTotal = computed(() => {
-  if (!total.value) return 0
-  return Number.parseFloat(total.value).toFixed(3)
+  const to = total.value
+  return to ? Number.parseFloat(to).toFixed(3) : 0
 })
 
 
