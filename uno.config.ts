@@ -11,5 +11,11 @@ export default defineConfig({
         'vertical-align': 'middle',
       },
     })
-  ]
+  ],
+  theme: {
+    colors: {
+      'blue': '#1098fc',
+      VBlack: '#24272a'
+    }
+  }
 })

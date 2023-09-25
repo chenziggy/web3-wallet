@@ -15,6 +15,7 @@ export default defineConfig({
       imports: [
         'vue',
         VueRouterAutoImports,
+        '@vueuse/core',
         {
           'vue-router/auto': ['useLink']
         }
