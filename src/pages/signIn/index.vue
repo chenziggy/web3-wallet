@@ -56,10 +56,7 @@ const store = useHdStore()
 const { hdStore } = storeToRefs(store)
 
 onMounted(async ( ) => {
-  const pwd = hdStore.value.password
-  if (pwd) {
-    password.value = pwd
-  }
+  password.value = hdStore.value.password
   mnemonic.value = hdStore.value.mnemonic
 })
 
@@ -125,12 +122,6 @@ async function handleMnemonic() {
   await createWallet(mnemonic.value)
 }
 
-watch(mnemonic, (val) => {
-  mnemonicInput.value = val
-}, {
-  immediate: true
-})
-
 async function createWallet(mnemonic: string) {
   // 生成秘钥对 keyPair
   const seed = mnemonicToSeedSync(mnemonic)
@@ -144,11 +135,10 @@ async function createWallet(mnemonic: string) {
   const lowerCaseAddress = wallet.getAddressString()
   // 获取校验地址
   const privateKey = wallet.getPrivateKeyString()
-  hdStore.value.wallets.push({
+  await store.addWallet({
     address: lowerCaseAddress,
     privateKey,
   })
-  await store.setHdStore( {wallets: JSON.parse(JSON.stringify(hdStore.value))})
   router.push({
     path: '/home'
   })

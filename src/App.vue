@@ -3,8 +3,17 @@ import { useQueryProvider} from 'vue-query'
 import useHdStore from './stores/hdStore';
 
 useQueryProvider()
-const {getHdStore} = useHdStore()
-getHdStore()
+const store = useHdStore()
+const { hdStore } = storeToRefs(store)
+const router = useRouter()
+
+store.getHdStore().then(() => {
+  if (!hdStore.value.password || !hdStore.value.mnemonic) {
+    router.push({
+      path: '/signin'
+    })    
+  }
+})
 
 </script>
 

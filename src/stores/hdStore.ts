@@ -23,18 +23,23 @@ interface HdStore {
 
   async function setHdStore(hd: Partial<HdStore>) {
     const res = Object.assign({}, hdStore.value, hd)
-    console.log("🚀 ~ file: hdStore.ts:26 ~ setHdStore ~ res:", res)
-    hdStore.value = await setItem(hdStoreLetter, res)
+    hdStore.value = await setItem(hdStoreLetter, JSON.parse(JSON.stringify(res)))
   }
 
   async function getHdStore() {
     Object.assign(hdStore.value, await getItem(hdStoreLetter))
   }
 
+  async function addWallet(wallet: Wallet) {
+    hdStore.value.wallets.push(wallet)
+    await setHdStore({wallets: hdStore.value.wallets})
+  }
+
   return {
     hdStore,
     setHdStore,
-    getHdStore
+    getHdStore,
+    addWallet
   }
 })
 
