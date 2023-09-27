@@ -55,23 +55,6 @@ const store = useHdStore()
 
 const { hdStore } = storeToRefs(store)
 
-onMounted(async ( ) => {
-  password.value = hdStore.value.password
-  mnemonic.value = hdStore.value.mnemonic
-})
-
-
-// const hdStore = ref<Wallet[]>([])
-// onMounted(async () => {
-//   const pwd = await getItem('password')
-//   if (pwd) {
-//     password.value = pwd as string
-//     passwordFlag.value = true
-//     hdStore.value = await getItem('hdStore') || []
-//     mnemonic.value = hdStore.value?.[0]?.mnemonic || ''
-//   }
-// })
-
 const password = ref('')
 const passwordFlag = ref(false)
 
@@ -86,15 +69,12 @@ async function handlePassword() {
   await store.setHdStore({
     password: password.value
   })
-  generate()
+  mnemonic.value = generateMnemonic()
   passwordFlag.value = true
 } 
 
 const mnemonic = ref('')
 const mnemonicInput = ref()
-function generate() {
-  mnemonic.value = generateMnemonic()
-}
 
 const { copy } = useClipboard({ source: mnemonic, legacy: true })
 const copyFlag = ref(false)
@@ -119,6 +99,9 @@ async function handleMnemonic() {
     })
     return
   }
+  await store.setHdStore({
+    mnemonic: mnemonic.value
+  })
   await createWallet(mnemonic.value)
 }
 
