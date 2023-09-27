@@ -11,4 +11,22 @@ html, body {
   height: 100vh;
   width: 100vw;
 }
+.van-field {
+  background-color: transparent;
 
+  &.van-cell {
+    width: inherit;
+    border: 1px solid #aaa;
+    border-radius: 10px;
+    margin: 0 10px;
+    box-sizing: border-box;
+
+    &:after {
+      border-bottom: none;
+    }
+  }
+  
+  .van-field__control {
+    /* color: white; */
+  }
+}

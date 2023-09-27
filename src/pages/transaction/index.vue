@@ -22,7 +22,7 @@
 export default {
   name: 'VTransaction'
 }
-</script>``
+</script>
 
 <script setup lang="ts">
 
@@ -35,18 +35,6 @@ const router = useRouter()
 <style scoped lang="scss">
 :deep(.van-field) {
   background-color: transparent;
-
-  &.van-cell {
-    width: inherit;
-    border: 1px solid #aaa;
-    border-radius: 10px;
-    margin: 0 10px;
-    box-sizing: border-box;
-
-    &:after {
-      border-bottom: none;
-    }
-  }
   
   .van-field__control {
     color: white;

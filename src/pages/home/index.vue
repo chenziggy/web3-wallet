@@ -59,7 +59,7 @@ const displayAddress = computed(() => {
 const {copy} = useClipboard({source:address, legacy: true})
 
 function copyAddress() {
-  return copy(address).then(() => {
+  return copy(address.value).then(() => {
     showToast({
       message: '已复制',
       position: 'top'
@@ -168,4 +168,5 @@ async function transaction() {
     console.log(`https://goerli.etherscan.io/tx/${txid}`)
   })
 }
+ 
 </script>
