@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import { useQueryProvider} from 'vue-query'
+import useHdStore from './stores/hdStore';
 
 useQueryProvider()
+const {getHdStore} = useHdStore()
+getHdStore()
+
 </script>
 
 <template>

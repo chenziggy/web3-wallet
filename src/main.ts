@@ -10,7 +10,10 @@ import {
   setupDataFetchingGuard,
 } from 'vue-router/auto'
 import VHome from './pages/home/index.vue'
+import { createPinia } from 'pinia'
 
+
+const pinia = createPinia()
 
 const router = createRouter({
   history: createWebHistory(),
@@ -19,9 +22,11 @@ const router = createRouter({
   },
 })
 
+
 setupDataFetchingGuard(router)
 
 createApp(App)
+.use(pinia)
 .use(router)
 .use(VueQueryPlugin)
 .mount('#app')

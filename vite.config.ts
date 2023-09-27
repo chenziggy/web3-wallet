@@ -10,10 +10,14 @@ import { VueRouterAutoImports } from 'unplugin-vue-router'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  resolve: {
+    alias: [{ find: "@/", replacement: "/src/" }],
+  },
   plugins: [
     AutoImport({ 
       imports: [
         'vue',
+        'pinia',
         VueRouterAutoImports,
         '@vueuse/core',
         {
