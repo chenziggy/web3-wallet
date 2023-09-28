@@ -1,24 +1,17 @@
 import {defineStore} from 'pinia'
 import { getItem, setItem } from 'localforage'
-
-interface Wallet {
-  address: string,
-  privateKey: string,
-}
+import { Wallet } from '@ethereumjs/wallet'
 
 const hdStoreLetter = 'hdStore'
-
-
 interface HdStore {
-  wallets: Wallet[],
-  mnemonic: string,
-  password: string
+  keystores: string[],
+  password: string,
 }
 
  const useHdStore = defineStore(hdStoreLetter,  () => {
    
   const hdStore: Ref<HdStore> = ref(
-   { wallets: [], mnemonic: '', password: ''}
+   { keystores: [], password: ''}
   )
 
   async function setHdStore(hd: Partial<HdStore>) {
@@ -30,16 +23,30 @@ interface HdStore {
     Object.assign(hdStore.value, await getItem(hdStoreLetter))
   }
 
-  async function addWallet(wallet: Wallet) {
-    hdStore.value.wallets.push(wallet)
-    await setHdStore({wallets: hdStore.value.wallets})
+  async function addKeyStore(keystore: string) {
+    hdStore.value.keystores.push(keystore)
+    await setHdStore({keystores: hdStore.value.keystores})
+  }
+
+  const wallets = ref<Wallet[]>([])
+   async function getWallets() {
+    if (hdStore.value.keystores.length && hdStore.value.password) {
+      for (const keystore of hdStore.value.keystores) {
+        const wallet = await Wallet.fromV3( keystore , hdStore.value.password)
+        wallets.value.push(wallet)
+        console.log(wallets.value)
+      }
+      
+    }
   }
 
   return {
     hdStore,
+    wallets,
     setHdStore,
     getHdStore,
-    addWallet
+    addKeyStore,
+    getWallets
   }
 })
 

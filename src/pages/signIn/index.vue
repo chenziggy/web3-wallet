@@ -99,9 +99,6 @@ async function handleMnemonic() {
     })
     return
   }
-  await store.setHdStore({
-    mnemonic: mnemonic.value
-  })
   await createWallet(mnemonic.value)
 }
 
@@ -109,19 +106,14 @@ async function createWallet(mnemonic: string) {
   // 生成秘钥对 keyPair
   const seed = mnemonicToSeedSync(mnemonic)
   const hdWallet = hdkey.EthereumHDKey.fromMasterSeed(seed)
-  const index_address = hdStore.value.wallets.length ?? 0
+  const index_address = hdStore.value.keystores.length ?? 0
   const keyPair = hdWallet.derivePath(`m/44'/60'/0'/0'/${index_address}`)
 
   // 获取钱包
   const wallet = keyPair.getWallet()
   // 获取地址
-  const lowerCaseAddress = wallet.getAddressString()
-  // 获取校验地址
-  const privateKey = wallet.getPrivateKeyString()
-  await store.addWallet({
-    address: lowerCaseAddress,
-    privateKey,
-  })
+  const keystore = await wallet.toV3String(password.value)
+  await store.addKeyStore(keystore)
   router.push({
     path: '/home'
   })
