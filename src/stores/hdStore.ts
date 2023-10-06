@@ -5,7 +5,8 @@ const hdStoreLetter = 'hdStore'
 interface HdStore {
   keystores: string[],
   password: string,
-  mnemonic: string
+  mnemonic: string,
+  usernameList: string[]
 }
 
 interface VWallet {
@@ -17,7 +18,7 @@ interface VWallet {
  const useHdStore = defineStore(hdStoreLetter,  () => {
    
   const hdStore: Ref<HdStore> = ref(
-   { keystores: [], password: '', mnemonic: ''}
+   { keystores: [], password: '', mnemonic: '', usernameList: []}
   )
 
   async function setHdStore(hd: Partial<HdStore>) {
@@ -34,21 +35,28 @@ interface VWallet {
     await setHdStore({keystores: hdStore.value.keystores})
   }
 
+  async function addUsernameList(username: string) {
+    hdStore.value.usernameList.push(username)
+    await setHdStore({usernameList: hdStore.value.usernameList})
+  }
+
   const wallets = ref<VWallet[]>([])
-   async function getWallets() {
+  async function getWallets() {
     if (hdStore.value.keystores.length && hdStore.value.password) {
-      let index = 1
+        const list = []
+        let index = 0
       for (const keystore of hdStore.value.keystores) {
-        const wallet = await Wallet.fromV3( keystore , hdStore.value.password)
+        const wallet = await Wallet.fromV3( keystore ,hdStore.value.password)
         const address = wallet.getAddressString()
         const privateKey = wallet.getPrivateKeyString()
-        wallets.value.push({
+        list.push({
           address,
           privateKey,
-          username: `Account${index}`
+          username: `${hdStore.value.usernameList[index]}`
         })
         index++
       }
+      wallets.value = list
     }
   }
 
@@ -73,6 +81,7 @@ interface VWallet {
     currentAccount,
     initCurrentAccount,
     changeCurrentAccount,
+    addUsernameList
   }
 })
 

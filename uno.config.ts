@@ -17,5 +17,9 @@ export default defineConfig({
       'blue': '#1098fc',
       VBlack: '#24272a'
     }
+  },
+  shortcuts: {
+    'btn': '!rounded-full !bg-blue !text-white !border-blue',
+    'btn-transparent': '!rounded-full !bg-transparent !text-blue !border-blue'
   }
 })
