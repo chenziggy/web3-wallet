@@ -5,6 +5,7 @@ const hdStoreLetter = 'hdStore'
 interface HdStore {
   keystores: string[],
   password: string,
+  mnemonic: string
 }
 
 interface VWallet {
@@ -16,7 +17,7 @@ interface VWallet {
  const useHdStore = defineStore(hdStoreLetter,  () => {
    
   const hdStore: Ref<HdStore> = ref(
-   { keystores: [], password: ''}
+   { keystores: [], password: '', mnemonic: ''}
   )
 
   async function setHdStore(hd: Partial<HdStore>) {
@@ -54,6 +55,7 @@ interface VWallet {
   const currentAccount = ref<VWallet>()
 
   async function initCurrentAccount() {
+    await getWallets()
     currentAccount.value = wallets.value[0]
   }
 

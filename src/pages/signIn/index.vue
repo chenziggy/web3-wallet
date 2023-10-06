@@ -2,7 +2,7 @@
   <div class="flex flex-col items-center px-4 relative h-full">
     <template v-if="!passwordFlag">
         <p>请输入密码</p>
-        <van-field class="!w-full box-border top-1/3 -translate-y-1/2 absolute" v-model="password"></van-field>
+        <van-field class="!w-full top-1/3 -translate-y-1/2 relative" v-model="password"></van-field>
         <div class="w-full absolute bottom-5 px-4 box-border">
           <van-button size="large" class="!mt-4" type="primary" @click="submitPassword" :loading="loadingPassword">
             确认
@@ -71,7 +71,7 @@ async function handlePassword() {
   })
   mnemonic.value = generateMnemonic()
   passwordFlag.value = true
-} 
+}
 
 const mnemonic = ref('')
 const mnemonicInput = ref()
@@ -99,6 +99,9 @@ async function handleMnemonic() {
     })
     return
   }
+  await store.setHdStore({
+    mnemonic: mnemonic.value
+  })
   await createWallet(mnemonic.value)
 }
 
@@ -114,6 +117,7 @@ async function createWallet(mnemonic: string) {
   // 获取地址
   const keystore = await wallet.toV3String(password.value)
   await store.addKeyStore(keystore)
+  await store.initCurrentAccount()
   router.push({
     path: '/home'
   })

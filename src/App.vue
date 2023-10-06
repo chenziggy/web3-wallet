@@ -9,15 +9,14 @@ const router = useRouter()
 
 onBeforeMount(() => {
   store.getHdStore().then(async () => {
-  if (!hdStore.value.password || !hdStore.value.keystores.length) {
-    router.push({
-      path: '/signin'
-    })
-  } else {
-    await store.getWallets()
-    store.initCurrentAccount()
-  }
-})
+    if (!hdStore.value.password || !hdStore.value.keystores.length) {
+      router.push({
+        path: '/signin'
+      })
+    } else {
+      await store.initCurrentAccount()
+    }
+  })
 })
 
 </script>
