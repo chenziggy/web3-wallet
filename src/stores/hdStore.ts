@@ -1,11 +1,16 @@
 import {defineStore} from 'pinia'
 import { getItem, setItem } from 'localforage'
 import { Wallet } from '@ethereumjs/wallet'
-
 const hdStoreLetter = 'hdStore'
 interface HdStore {
   keystores: string[],
   password: string,
+}
+
+interface VWallet {
+  address: string,
+  privateKey: string,
+  username: string
 }
 
  const useHdStore = defineStore(hdStoreLetter,  () => {
@@ -28,16 +33,32 @@ interface HdStore {
     await setHdStore({keystores: hdStore.value.keystores})
   }
 
-  const wallets = ref<Wallet[]>([])
+  const wallets = ref<VWallet[]>([])
    async function getWallets() {
     if (hdStore.value.keystores.length && hdStore.value.password) {
+      let index = 1
       for (const keystore of hdStore.value.keystores) {
         const wallet = await Wallet.fromV3( keystore , hdStore.value.password)
-        wallets.value.push(wallet)
-        console.log(wallets.value)
+        const address = wallet.getAddressString()
+        const privateKey = wallet.getPrivateKeyString()
+        wallets.value.push({
+          address,
+          privateKey,
+          username: `Account${index}`
+        })
+        index++
       }
-      
     }
+  }
+
+  const currentAccount = ref<VWallet>()
+
+  async function initCurrentAccount() {
+    currentAccount.value = wallets.value[0]
+  }
+
+  async function changeCurrentAccount(username: string) {
+    currentAccount.value = wallets.value.find(wallet => username === wallet.username)
   }
 
   return {
@@ -46,7 +67,10 @@ interface HdStore {
     setHdStore,
     getHdStore,
     addKeyStore,
-    getWallets
+    getWallets,
+    currentAccount,
+    initCurrentAccount,
+    changeCurrentAccount,
   }
 })
 

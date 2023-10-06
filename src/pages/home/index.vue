@@ -46,20 +46,24 @@ export default {
 <script setup lang="ts">
 import { useQuery } from 'vue-query'
 import { showToast } from 'vant'
+import useHdStore from '@/stores/hdStore'
 import 'vant/es/toast/style';
 
 import Web3 from 'web3'
 
-const address = ref(import.meta.env.VITE_ADDRESS)
+const store = useHdStore()
+const { currentAccount }  = storeToRefs(store)
+
+
 const displayAddress = computed(() => {
-  const val = address.value
+  const val = currentAccount.value?.address
   return val ? `${val.slice(0, 5)}...${val.slice(-3)}` : ''
 })
 
-const {copy} = useClipboard({source:address, legacy: true})
+const {copy} = useClipboard({source:currentAccount.value?.address, legacy: true})
 
 function copyAddress() {
-  return copy(address.value).then(() => {
+  return copy(currentAccount.value?.address).then(() => {
     showToast({
       message: '已复制',
       position: 'top'
@@ -67,12 +71,16 @@ function copyAddress() {
   })
 }
 
-const privateKey  = ref(import.meta.env.VITE_PRIVATE_KEY)
+const privateKey  = ref()
 const web3 = new Web3(import.meta.env.VITE_PROVIDER)
 
 
 async function fetchTotal() {
-  const balance = await web3.eth.getBalance(address.value)
+  const address = currentAccount.value?.address
+  if (!address) {
+    return 0
+  }
+  const balance = await web3.eth.getBalance(address)
   return web3.utils.fromWei(balance, 'ether')
 }
 
@@ -137,19 +145,17 @@ function execute(strategy: string) {
   return strategies[strategy]()
 }
 
-
-
-
-
-
-
 async function transaction() {
-  const nonce = await web3.eth.getTransactionCount(address.value)
+  const address = currentAccount.value?.address
+  if (!address) {
+    return
+  }
+  const nonce = await web3.eth.getTransactionCount(address)
   const gasPrice = await web3.eth.getGasPrice()
   const value = web3.utils.toWei('0.000001', 'ether')
 
   const rawTx = {
-    from: address.value,
+    from: address,
     to: '0xCBb083ED65B5bBe8F8Db2Ce65195B7775dC328b5',
     nonce,
     gasPrice,

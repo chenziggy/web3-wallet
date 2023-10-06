@@ -4,10 +4,10 @@ import useHdStore from './stores/hdStore';
 
 useQueryProvider()
 const store = useHdStore()
-const { hdStore, wallets } = storeToRefs(store)
+const { hdStore } = storeToRefs(store)
 const router = useRouter()
 
-onMounted(() => {
+onBeforeMount(() => {
   store.getHdStore().then(async () => {
   if (!hdStore.value.password || !hdStore.value.keystores.length) {
     router.push({
@@ -15,7 +15,7 @@ onMounted(() => {
     })
   } else {
     await store.getWallets()
-    console.log('wallets', wallets.value)
+    store.initCurrentAccount()
   }
 })
 })
