@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { mnemonicToSeedSync } from 'bip39'
-import { hdkey } from '@ethereumjs/wallet'
+import { Wallet, hdkey } from '@ethereumjs/wallet'
 import useHdStore from '@/stores/hdStore'
 import { useExecute } from '@/shared/hooks'
 
@@ -13,6 +13,7 @@ const emit = defineEmits(['update:modelValue'])
 enum Title {
   List = '选择一个账号',
   Add = 'Add account',
+  Import = '导入账户',
 }
 
 const store = useHdStore()
@@ -21,8 +22,9 @@ function handleClose() {
   emit('update:modelValue', false)
 }
 
-function handleChange(address: string) {
-  store.changeCurrentAccount(address)
+async function handleChange(address: string) {
+  await store.changeCurrentAccount(address)
+  emit('update:modelValue', false)
 }
 
 const { wallets, currentAccount } = storeToRefs(store)
@@ -35,7 +37,7 @@ const filterWallets = computed(() => {
 
 const title = ref(Title.List)
 
-function ChangeView(val: Title) {
+function changeView(val: Title) {
   title.value = val
 }
 
@@ -62,7 +64,29 @@ async function createWallet() {
   await store.addKeyStore(keystore)
   await store.addUsernameList(username.value)
   await store.getWallets()
-  ChangeView(Title.List)
+  changeView(Title.List)
+}
+
+// 导入
+const privateKey = ref('')
+const privateKeyWarn = ref(false)
+
+watch(privateKey, () => {
+  privateKeyWarn.value = !privateKey.value
+})
+
+const [loadingImport, submitImport] = useExecute(importAccount)
+
+async function importAccount(privateKey: string) {
+  if (!privateKey)
+    return
+
+  const buffer = Buffer.from(privateKey, 'hex')
+  const wallet = Wallet.fromPrivateKey(buffer)
+  const keystore = await wallet.toV3String(hdStore.value.password)
+  await store.addKeyStore(keystore)
+  await store.getWallets()
+  changeView(Title.List)
 }
 </script>
 
@@ -80,38 +104,51 @@ async function createWallet() {
       </div>
       <template v-if="title === Title.List">
         <div class="p-2">
-          <van-field v-model="queryUsername" class="!w-full !box-border !mx-0 !bg-transparent !rounded !p-1.5" left-icon="search" placeholder="搜索账户">
+          <van-field
+            v-model="queryUsername" class="!w-full !box-border !mx-0 !bg-transparent !rounded !p-1.5"
+            left-icon="search" placeholder="搜索账户"
+          >
             <div class="i-tabler-search" />
           </van-field>
         </div>
         <ul class="mt-4 h-[300px] overflow-auto">
-          <li v-for="wallet of filterWallets" :key="wallet.address" class="py-0.5 px-5 relative cursor-default" :class="{ 'bg-blue/[.2]': currentAccount.address === wallet.address }" @click="handleChange(wallet.address)">
+          <li
+            v-for="wallet of filterWallets" :key="wallet.address" class="py-0.5 px-5 relative cursor-default"
+            :class="{ 'bg-blue/[.2]': currentAccount.address === wallet.address }" @click="handleChange(wallet.address)"
+          >
             <p class="mb-1 font-bold">
               {{ wallet.username }}
             </p>
             <p class="mt-1 overflow-hidden text-ellipsis text-sm text-[#bbb]">
               <span>{{ wallet.address }}</span>
             </p>
-            <div v-if="currentAccount.address === wallet.address" class="absolute top-1/2 left-1 -translate-y-1/2 bg-blue rounded h-9/10 w-1" />
+            <div
+              v-if="currentAccount.address === wallet.address"
+              class="absolute top-1/2 left-1 -translate-y-1/2 bg-blue rounded h-9/10 w-1"
+            />
           </li>
         </ul>
         <div class="text-blue font-bold my-2 px-2">
-          <div class="py-3 flex items-center" @click="ChangeView(Title.Add)">
+          <div class="group/add py-3 flex items-center" @click="changeView(Title.Add)">
             <span class="i-tabler-plus text-lg" />
-            <span class="cursor-pointer">Add account</span>
+            <span class="cursor-pointer group-hover/add:underline underline-offset-4">Add account</span>
+          </div>
+          <div class="group/import py-3 flex items-center" @click="changeView(Title.Import)">
+            <span class="i-tabler-download text-lg" />
+            <span class="cursor-pointer group-hover/import:underline underline-offset-4">导入账户</span>
           </div>
         </div>
       </template>
       <template v-if="title === Title.Add">
         <div class="px-4 py-2">
           <p>账户名称</p>
-          <van-field v-model="username" class="!w-full !box-border !mx-0 !bg-transparent !rounded !p-1.5" placeholder="账户" />
+          <van-field v-model="username" class="input" placeholder="账户" />
           <p class="text-xs color-red h-4">
             必填
           </p>
         </div>
         <div class="flex justify-between px-4 mb-4">
-          <van-button class="basis-[49%] btn-transparent" @click="ChangeView(Title.List)">
+          <van-button class="basis-[49%] btn-transparent" @click="changeView(Title.List)">
             取消
           </van-button>
           <van-button class="basis-[49%] btn" :loading="loadingCreate" @click="submitCreate">
@@ -119,10 +156,25 @@ async function createWallet() {
           </van-button>
         </div>
       </template>
+      <template v-if="title === Title.Import">
+        <p class="px-4">
+          导入的账户不会与最初创建的账号助记词相关联
+        </p>
+        <span class="px-4">请粘贴您的私钥：</span>
+        <div class="px-4 py-2">
+          <van-field v-model="privateKey" class="input" :class="{ '!border-red': privateKeyWarn }" />
+        </div>
+        <div class="flex justify-between mt-4 mb-6 px-4">
+          <van-button class="basis-[49%] btn-transparent" @click="changeView(Title.List)">
+            取消
+          </van-button>
+          <van-button class="basis-[49%] btn" :loading="loadingImport" @click="submitImport(privateKey)">
+            导入
+          </van-button>
+        </div>
+      </template>
     </div>
   </van-overlay>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

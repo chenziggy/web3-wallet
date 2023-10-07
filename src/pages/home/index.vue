@@ -143,7 +143,7 @@ export default {
       <span class="align-middle">{{ displayAddress }}</span>
       <div class="i-tabler-copy text-lg ml-1" />
     </div>
-    <p class="mt-1 text-4xl">
+    <p class="mt-4 text-4xl">
       {{ displayTotal }} GoerliETH
     </p>
     <div class="flex justify-evenly w-full">

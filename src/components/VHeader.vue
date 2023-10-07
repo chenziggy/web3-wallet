@@ -14,13 +14,14 @@ const show = ref(false)
 
 <template>
   <header class="bg-v-black h-12 shadow-lg shadow-zinc-900 flex items-center justify-between index-10">
-    <div class="bg-v-black h-6 w-12 mx-3 rounded-3" />
+    <div class="bg-v-black h-4 w-4 mx-3 rounded-3" />
     <div v-if="username" class="hover:bg-black/[.1] rounded-3 py-2 px-4" @click="show = true">
       {{ username }}
       <div class="i-tabler-chevron-down" />
     </div>
+    <div v-else class="i-tabler-loader animate-spin text-lg" />
     <div class="i-tabler-dots-vertical mx-3 my-1" @click="() => { console.log('click') }" />
-    <AcountList v-model="show" />
+    <AccountList v-model="show" />
   </header>
 </template>
 

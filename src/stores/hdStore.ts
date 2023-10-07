@@ -49,10 +49,11 @@ const useHdStore = defineStore(hdStoreLetter, () => {
         const wallet = await Wallet.fromV3(keystore, hdStore.value.password)
         const address = wallet.getAddressString()
         const privateKey = wallet.getPrivateKeyString()
+        const username = hdStore.value.usernameList[index] ?? `Account${index + 1}`
         list.push({
           address,
           privateKey,
-          username: `${hdStore.value.usernameList[index]}`,
+          username,
         })
         index++
       }

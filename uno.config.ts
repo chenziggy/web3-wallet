@@ -21,5 +21,6 @@ export default defineConfig({
   shortcuts: {
     'btn': '!rounded-full !bg-blue !text-white !border-blue',
     'btn-transparent': '!rounded-full !bg-transparent !text-blue !border-blue',
+    'input': '!w-full !box-border !mx-0 !bg-transparent !rounded !p-1.5',
   },
 })
