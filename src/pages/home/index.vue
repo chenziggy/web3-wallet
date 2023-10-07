@@ -149,10 +149,10 @@ export default {
       <span class="align-middle">{{ displayAddress }}</span>
       <div class="i-tabler-copy text-lg ml-1" />
     </div>
-    <p class="mt-4 text-4xl">
+    <p class="mt-4 text-4xl h-10">
       <span v-if="isFetching" class="i-tabler-loader animate-spin" />
       <template v-else>
-        {{ displayTotal }} GoerliETH
+        <span>{{ displayTotal }} GoerliETH</span>
       </template>
     </p>
     <div class="flex justify-evenly w-full">

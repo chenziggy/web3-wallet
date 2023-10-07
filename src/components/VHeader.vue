@@ -9,13 +9,18 @@ const username = computed(() => {
   return currentAccount.value?.username
 })
 
+const loadingUsername = ref(true)
+watch(username, (val) => {
+  loadingUsername.value = !!val
+})
+
 const show = ref(false)
 </script>
 
 <template>
   <header class="bg-v-black h-12 shadow-lg shadow-zinc-900 flex items-center justify-between index-10">
     <div class="bg-v-black h-4 w-4 mx-3 rounded-3" />
-    <div v-if="username" class="hover:bg-black/[.1] rounded-3 py-2 px-4" @click="show = true">
+    <div v-if="loadingUsername" class="hover:bg-black/[.1] rounded-3 py-2 px-4" @click="show = true">
       {{ username }}
       <div class="i-tabler-chevron-down" />
     </div>

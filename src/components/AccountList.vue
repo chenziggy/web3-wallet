@@ -4,7 +4,7 @@ import { Wallet, hdkey } from '@ethereumjs/wallet'
 import useHdStore from '@/stores/hdStore'
 import { useExecute } from '@/shared/hooks'
 
-defineProps<{
+const props = defineProps<{
   modelValue: boolean
 }>()
 
@@ -21,6 +21,14 @@ const store = useHdStore()
 function handleClose() {
   emit('update:modelValue', false)
 }
+
+watch(() => props.modelValue, (val) => {
+  if (!val) {
+    setTimeout(() => {
+      changeView(Title.List)
+    }, 400)
+  }
+})
 
 async function handleChange(address: string) {
   await store.changeCurrentAccount(address)
@@ -162,7 +170,7 @@ async function importAccount(privateKey: string) {
         </p>
         <span class="px-4">请粘贴您的私钥：</span>
         <div class="px-4 py-2">
-          <van-field v-model="privateKey" class="input" :class="{ '!border-red': privateKeyWarn }" />
+          <van-field v-model="privateKey" class="input" type="textarea" :class="{ '!border-red': privateKeyWarn }" />
         </div>
         <div class="flex justify-between mt-4 mb-6 px-4">
           <van-button class="basis-[49%] btn-transparent" @click="changeView(Title.List)">
