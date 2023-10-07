@@ -67,8 +67,8 @@ interface VWallet {
     currentAccount.value = wallets.value[0]
   }
 
-  async function changeCurrentAccount(username: string) {
-    currentAccount.value = wallets.value.find(wallet => username === wallet.username)
+  async function changeCurrentAccount(address: string) {
+    currentAccount.value = wallets.value.find(wallet => address === wallet.address)
   }
 
   return {

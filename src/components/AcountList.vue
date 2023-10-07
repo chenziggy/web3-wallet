@@ -10,12 +10,12 @@
         </div>
         <template v-if="title===TitleType.List">
           <div class="p-2">
-            <van-field class="!w-full !box-border !mx-0 !bg-transparent !rounded !p-1.5" left-icon="search" placeholder="搜索账户">
+            <van-field class="!w-full !box-border !mx-0 !bg-transparent !rounded !p-1.5" left-icon="search" v-model=queryUsername placeholder="搜索账户">
               <div class="i-tabler-search"></div>
             </van-field>
           </div>
           <ul class="mt-4 h-[300px] overflow-auto" >
-            <li class="py-0.5 px-5 relative cursor-default"  v-for="wallet of wallets" :key="wallet.address" :class="{'bg-blue/[.2]': currentAccount.address === wallet.address}">
+            <li class="py-0.5 px-5 relative cursor-default"  v-for="wallet of filterWallets" :key="wallet.address" :class="{'bg-blue/[.2]': currentAccount.address === wallet.address}" @click="handleChange(wallet.address)">
               <p class="mb-1 font-bold">{{ wallet.username }}</p>
               <p class="mt-1 overflow-hidden text-ellipsis text-sm text-[#bbb]">
                 <span>{{ wallet.address }}</span>
@@ -23,7 +23,7 @@
               <div class="absolute top-1/2 left-1 -translate-y-1/2 bg-blue rounded h-9/10 w-1" v-if="currentAccount.address === wallet.address"></div>
             </li>
           </ul>
-          <div class="text-blue font-bold my-2">
+          <div class="text-blue font-bold my-2 px-2">
             <div class="py-3 flex items-center" @click="ChangeView(TitleType.Add)" >
               <span class="i-tabler-plus text-lg"></span>
               <span class="cursor-pointer">Add account</span>
@@ -68,10 +68,20 @@ const store = useHdStore()
 
 
 function handleClose() {
-  console.log(1); emit('update:modelValue', false)
+  emit('update:modelValue', false)
+}
+
+function handleChange(address: string) {
+  store.changeCurrentAccount(address)
 }
 
 const {  wallets, currentAccount } = storeToRefs(store)
+
+const queryUsername = ref('')
+
+const filterWallets = computed(() => {
+  return wallets.value.filter(item => item.username.includes(queryUsername.value))
+})
 
 const title = ref(TitleType.List)
 
