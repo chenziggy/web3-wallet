@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useQueryProvider} from 'vue-query'
-import useHdStore from './stores/hdStore';
+import { useQueryProvider } from 'vue-query'
+import useHdStore from './stores/hdStore'
 
 useQueryProvider()
 const store = useHdStore()
@@ -11,21 +11,20 @@ onBeforeMount(() => {
   store.getHdStore().then(async () => {
     if (!hdStore.value.password || !hdStore.value.keystores.length) {
       router.push({
-        path: '/signin'
+        path: '/signin',
       })
-    } else {
+    }
+    else {
       await store.initCurrentAccount()
     }
   })
 })
-
 </script>
 
 <template>
-  <VHeader></VHeader>
-  <router-view class="flex-1 overflow-y-auto"></router-view>
+  <VHeader />
+  <router-view class="flex-1 overflow-y-auto" />
 </template>
-
 
 <style lang="scss">
 #app {

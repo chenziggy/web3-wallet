@@ -1,12 +1,15 @@
 {
   "name": "web3-wallet",
-  "private": true,
-  "version": "0.0.0",
   "type": "module",
+  "version": "0.0.0",
+  "private": true,
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@ethereumjs/tx": "^5.0.0",
@@ -24,10 +27,14 @@
     "web3": "^4.1.2"
   },
   "devDependencies": {
+    "@antfu/eslint-config": "1.0.0-beta.21",
     "@iconify-json/tabler": "^1.1.91",
     "@unocss/preset-icons": "^0.56.1",
     "@unocss/preset-wind": "^0.56.1",
     "@vitejs/plugin-vue": "^4.2.3",
+    "eslint": "^8.51.0",
+    "husky": "^8.0.3",
+    "lint-staged": "^14.0.1",
     "sass": "^1.68.0",
     "typescript": "^5.0.2",
     "unocss": "^0.56.1",

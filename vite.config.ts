@@ -1,4 +1,3 @@
-import { resolve } from 'path'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import AutoImport from 'unplugin-auto-import/vite'
@@ -11,23 +10,23 @@ import { VueRouterAutoImports } from 'unplugin-vue-router'
 // https://vitejs.dev/config/
 export default defineConfig({
   resolve: {
-    alias: [{ find: "@/", replacement: "/src/" }],
+    alias: [{ find: '@/', replacement: '/src/' }],
   },
   plugins: [
-    AutoImport({ 
+    AutoImport({
       imports: [
         'vue',
         'pinia',
         VueRouterAutoImports,
         '@vueuse/core',
         {
-          'vue-router/auto': ['useLink']
-        }
-      ]
+          'vue-router/auto': ['useLink'],
+        },
+      ],
     }),
-    Components({ dts: true, resolvers: [VantResolver()]}),
+    Components({ dts: true, resolvers: [VantResolver()] }),
     UnoCSS(),
     VueRouter(),
-    vue()
+    vue(),
   ],
 })

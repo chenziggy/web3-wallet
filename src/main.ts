@@ -1,17 +1,16 @@
 import { createApp } from 'vue'
 import './style.css'
-import App from './App.vue'
-import {VueQueryPlugin } from 'vue-query'
+import { VueQueryPlugin } from 'vue-query'
 import 'virtual:uno.css'
 import './shared/common'
 import {
-  createWebHistory,
   createRouter,
+  createWebHistory,
   setupDataFetchingGuard,
 } from 'vue-router/auto'
-import VHome from './pages/home/index.vue'
 import { createPinia } from 'pinia'
-
+import VHome from './pages/home/index.vue'
+import App from './App.vue'
 
 const pinia = createPinia()
 
@@ -22,11 +21,10 @@ const router = createRouter({
   },
 })
 
-
 setupDataFetchingGuard(router)
 
 createApp(App)
-.use(pinia)
-.use(router)
-.use(VueQueryPlugin)
-.mount('#app')
+  .use(pinia)
+  .use(router)
+  .use(VueQueryPlugin)
+  .mount('#app')
