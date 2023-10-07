@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useQuery, useQueryClient } from 'vue-query'
 import { showToast } from 'vant'
-import Web3 from 'web3'
+import type Web3 from 'web3'
 import useHdStore from '@/stores/hdStore'
 import 'vant/es/toast/style'
 
@@ -25,14 +25,18 @@ function copyAddress() {
 }
 
 const privateKey = ref()
-const web3 = new Web3(import.meta.env.VITE_PROVIDER)
-
+const web3 = inject('web3') as Web3
 async function fetchTotal() {
   const address = currentAccount.value?.address
   if (!address)
     return 0
 
   const balance = await web3.eth.getBalance(address)
+  web3.eth.getPastLogs({
+    address,
+  })
+  // .then(console.log)
+    .catch(console.error)
   return web3.utils.fromWei(balance, 'ether')
 }
 
@@ -101,37 +105,6 @@ const strategies: Record<string, () => void> = {
 function execute(strategy: string) {
   return strategies[strategy]()
 }
-
-async function transaction() {
-  const address = currentAccount.value?.address
-  if (!address)
-    return
-
-  const nonce = await web3.eth.getTransactionCount(address)
-  const gasPrice = await web3.eth.getGasPrice()
-  const value = web3.utils.toWei('0.000001', 'ether')
-
-  const rawTx = {
-    from: address,
-    to: '0xCBb083ED65B5bBe8F8Db2Ce65195B7775dC328b5',
-    nonce,
-    gasPrice,
-    value,
-    data: '0x0000',
-    gas: BigInt(0),
-  }
-
-  const gas = await web3.eth.estimateGas(rawTx)
-  rawTx.gas = gas
-
-  const signedTx = await web3.eth.accounts.signTransaction(rawTx, privateKey.value)
-
-  const trans = web3.eth.sendSignedTransaction(signedTx.rawTransaction)
-  trans.on('transactionHash', (txid) => {
-    /* eslint-disable no-console */
-    console.log(`https://goerli.etherscan.io/tx/${txid}`)
-  })
-}
 </script>
 
 <script lang="ts">
@@ -182,8 +155,5 @@ export default {
     <p>status: {{ status }}</p>
     <p>error: {{ error }}</p>
     <p>isFetching: {{ isFetching }}</p>
-    <van-button type="primary" @click="transaction">
-      转账
-    </van-button>
   </div>
 </template>

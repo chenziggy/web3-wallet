@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useQueryProvider } from 'vue-query'
+import Web3 from 'web3'
 import useHdStore from './stores/hdStore'
 
 useQueryProvider()
@@ -8,6 +9,8 @@ const { hdStore } = storeToRefs(store)
 const router = useRouter()
 
 onBeforeMount(() => {
+  const web3 = new Web3(import.meta.env.VITE_PROVIDER)
+  provide('web3', web3)
   store.getHdStore().then(async () => {
     if (!hdStore.value.password || !hdStore.value.keystores.length) {
       router.push({
