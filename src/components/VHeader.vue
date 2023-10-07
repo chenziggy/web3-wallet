@@ -9,7 +9,7 @@ const username = computed(() => {
   return currentAccount.value?.username
 })
 
-const loadingUsername = ref(true)
+const loadingUsername = ref(false)
 watch(username, (val) => {
   loadingUsername.value = !!val
 })
