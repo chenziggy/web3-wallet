@@ -136,12 +136,13 @@ export default {
 
 <template>
   <div class="flex flex-col items-center bg-v-black">
-    <p
+    <div
       class="mx-auto mt-5 bg-blue/[.15] rounded-[16px] py-2 px-3 color-blue text-xs text-center"
+      @click="copyAddress"
     >
       <span class="align-middle">{{ displayAddress }}</span>
-    </p>
-    <div class="i-tabler-copy text-lg ml-1" @click="copyAddress" />
+      <div class="i-tabler-copy text-lg ml-1" />
+    </div>
     <p class="mt-1 text-4xl">
       {{ displayTotal }} GoerliETH
     </p>

@@ -10,7 +10,7 @@ defineProps<{
 
 const emit = defineEmits(['update:modelValue'])
 
-enum TitleType {
+enum Title {
   List = '选择一个账号',
   Add = 'Add account',
 }
@@ -33,9 +33,9 @@ const filterWallets = computed(() => {
   return wallets.value.filter(item => item.username.includes(queryUsername.value))
 })
 
-const title = ref(TitleType.List)
+const title = ref(Title.List)
 
-function ChangeView(val: TitleType) {
+function ChangeView(val: Title) {
   title.value = val
 }
 
@@ -62,7 +62,7 @@ async function createWallet() {
   await store.addKeyStore(keystore)
   await store.addUsernameList(username.value)
   await store.getWallets()
-  ChangeView(TitleType.List)
+  ChangeView(Title.List)
 }
 </script>
 
@@ -71,14 +71,14 @@ async function createWallet() {
     <div class="relative bg-VBlack w-5/6 mx-auto mt-1/8 rounded overflow-auto box-border" @click.stop>
       <div class="flex justify-between items-center h-12">
         <div>
-          <span v-show="title !== TitleType.List" class="i-tabler-chevron-left text-2xl px-2" @click="title = TitleType.List" />
+          <span v-show="title !== Title.List" class="i-tabler-chevron-left text-2xl px-2" @click="title = Title.List" />
         </div>
         <p class="text-center my-4 font-bold">
           {{ title }}
         </p>
         <div class="i-tabler-x text-2xl px-2" @click="handleClose" />
       </div>
-      <template v-if="title === TitleType.List">
+      <template v-if="title === Title.List">
         <div class="p-2">
           <van-field v-model="queryUsername" class="!w-full !box-border !mx-0 !bg-transparent !rounded !p-1.5" left-icon="search" placeholder="搜索账户">
             <div class="i-tabler-search" />
@@ -96,13 +96,13 @@ async function createWallet() {
           </li>
         </ul>
         <div class="text-blue font-bold my-2 px-2">
-          <div class="py-3 flex items-center" @click="ChangeView(TitleType.Add)">
+          <div class="py-3 flex items-center" @click="ChangeView(Title.Add)">
             <span class="i-tabler-plus text-lg" />
             <span class="cursor-pointer">Add account</span>
           </div>
         </div>
       </template>
-      <template v-if="title === TitleType.Add">
+      <template v-if="title === Title.Add">
         <div class="px-4 py-2">
           <p>账户名称</p>
           <van-field v-model="username" class="!w-full !box-border !mx-0 !bg-transparent !rounded !p-1.5" placeholder="账户" />
@@ -111,7 +111,7 @@ async function createWallet() {
           </p>
         </div>
         <div class="flex justify-between px-4 mb-4">
-          <van-button class="basis-[49%] btn-transparent" @click="ChangeView(TitleType.List)">
+          <van-button class="basis-[49%] btn-transparent" @click="ChangeView(Title.List)">
             取消
           </van-button>
           <van-button class="basis-[49%] btn" :loading="loadingCreate" @click="submitCreate">
