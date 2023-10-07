@@ -150,7 +150,10 @@ export default {
       <div class="i-tabler-copy text-lg ml-1" />
     </div>
     <p class="mt-4 text-4xl">
-      {{ displayTotal }} GoerliETH
+      <span v-if="isFetching" class="i-tabler-loader animate-spin" />
+      <template v-else>
+        {{ displayTotal }} GoerliETH
+      </template>
     </p>
     <div class="flex justify-evenly w-full">
       <div

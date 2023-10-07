@@ -67,6 +67,22 @@ const useHdStore = defineStore(hdStoreLetter, () => {
     username: '',
   })
 
+  async function init() {
+    // perf first add one account
+    if (hdStore.value.keystores.length) {
+      const wallet = await Wallet.fromV3(hdStore.value.keystores[0], hdStore.value.password)
+      const address = wallet.getAddressString()
+      const privateKey = wallet.getPrivateKeyString()
+      const username = hdStore.value.usernameList[0] ?? `Account1`
+      currentAccount.value = {
+        address,
+        privateKey,
+        username,
+      }
+    }
+    await initCurrentAccount()
+  }
+
   async function initCurrentAccount() {
     await getWallets()
     currentAccount.value = wallets.value[0]
@@ -86,6 +102,7 @@ const useHdStore = defineStore(hdStoreLetter, () => {
     addKeyStore,
     getWallets,
     currentAccount,
+    init,
     initCurrentAccount,
     changeCurrentAccount,
     addUsernameList,

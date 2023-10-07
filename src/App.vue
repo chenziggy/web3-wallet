@@ -15,7 +15,7 @@ onBeforeMount(() => {
       })
     }
     else {
-      await store.initCurrentAccount()
+      await store.init()
     }
   })
 })
