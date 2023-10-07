@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useQuery } from 'vue-query'
+import { useQuery, useQueryClient } from 'vue-query'
 import { showToast } from 'vant'
 import Web3 from 'web3'
 import useHdStore from '@/stores/hdStore'
@@ -35,6 +35,12 @@ async function fetchTotal() {
   const balance = await web3.eth.getBalance(address)
   return web3.utils.fromWei(balance, 'ether')
 }
+
+const queryClient = useQueryClient()
+watch(currentAccount, (val, oldVal) => {
+  if (val.address !== oldVal.address)
+    queryClient.invalidateQueries({ queryKey: ['total'] })
+})
 
 function useTotalQuery() {
   return useQuery('total', fetchTotal)
