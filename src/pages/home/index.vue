@@ -33,7 +33,9 @@ async function fetchTotal() {
 
   const balance = await web3.eth.getBalance(address)
   web3.eth.getPastLogs({
-    address,
+    fromBlock: '0x0',
+    toBlock: 'latest',
+    address: currentAccount.value.address,
   })
   // .then(console.log)
     .catch(console.error)

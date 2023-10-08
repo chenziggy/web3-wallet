@@ -69,8 +69,9 @@ async function createWallet() {
   const wallet = keyPair.getWallet()
   // 获取地址
   const keystore = await wallet.toV3String(hdStore.value.password)
+  const address = wallet.getAddressString()
   await store.addKeyStore(keystore)
-  await store.addUsernameList(username.value)
+  await store.addUsernameMap(address, username.value)
   await store.getWallets()
   changeView(Title.List)
 }
@@ -120,24 +121,14 @@ async function importAccount(privateKey: string) {
           </van-field>
         </div>
         <ul class="mt-4 h-[300px] overflow-auto">
-          <li
-            v-for="wallet of filterWallets" :key="wallet.address" class="flex flex-row box-border py-0.5 px-2 relative cursor-default hidden"
-            :class="{ 'bg-blue/[.2]': currentAccount.address === wallet.address }" @click="handleChange(wallet.address)"
-          >
-            <div class="i-tabler-user shrink-0 text-4xl relative top-4" />
-            <div class="grow-1 overflow-hidden">
-              <p class="mb-1 font-bold">
-                {{ wallet.username }}
-              </p>
-              <p class="mt-1 overflow-hidden text-ellipsis text-sm text-[#bbb]">
-                <span>{{ wallet.address }}</span>
-              </p>
-            </div>
-            <div
-              v-if="currentAccount.address === wallet.address"
-              class="absolute top-1/2 left-1 -translate-y-1/2 bg-blue rounded h-9/10 w-1"
-            />
-          </li>
+          <AccountItem
+            v-for="wallet of filterWallets"
+            :key="wallet.address"
+            :address="wallet.address"
+            :username="wallet.username"
+            :select="currentAccount.address === wallet.address"
+            @click="handleChange(wallet.address)"
+          />
         </ul>
         <div class="text-blue font-bold my-2 px-2">
           <div class="group/add py-3 flex items-center" @click="changeView(Title.Add)">
@@ -187,5 +178,3 @@ async function importAccount(privateKey: string) {
     </div>
   </van-overlay>
 </template>
-
-<style scoped></style>

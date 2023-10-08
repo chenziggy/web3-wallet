@@ -1,24 +1,13 @@
 import { defineStore } from 'pinia'
 import { getItem, setItem } from 'localforage'
 import { Wallet } from '@ethereumjs/wallet'
+import type { HdStore, VWallet } from '@/types/common'
 
 const hdStoreLetter = 'hdStore'
-interface HdStore {
-  keystores: string[]
-  password: string
-  mnemonic: string
-  usernameList: string[]
-}
-
-interface VWallet {
-  address: string
-  privateKey: string
-  username: string
-}
 
 const useHdStore = defineStore(hdStoreLetter, () => {
   const hdStore: Ref<HdStore> = ref(
-    { keystores: [], password: '', mnemonic: '', usernameList: [] },
+    { keystores: [], password: '', mnemonic: '', usernameMap: {} },
   )
 
   async function setHdStore(hd: Partial<HdStore>) {
@@ -35,9 +24,9 @@ const useHdStore = defineStore(hdStoreLetter, () => {
     await setHdStore({ keystores: hdStore.value.keystores })
   }
 
-  async function addUsernameList(username: string) {
-    hdStore.value.usernameList.push(username)
-    await setHdStore({ usernameList: hdStore.value.usernameList })
+  async function addUsernameMap(address: string, username: string) {
+    hdStore.value.usernameMap[address] = username
+    await setHdStore({ usernameMap: hdStore.value.usernameMap })
   }
 
   const wallets = ref<VWallet[]>([])
@@ -49,7 +38,7 @@ const useHdStore = defineStore(hdStoreLetter, () => {
         const wallet = await Wallet.fromV3(keystore, hdStore.value.password)
         const address = wallet.getAddressString()
         const privateKey = wallet.getPrivateKeyString()
-        const username = hdStore.value.usernameList[index] ?? `Account${index + 1}`
+        const username = hdStore.value.usernameMap[address] ?? `Account${index + 1}`
         list.push({
           address,
           privateKey,
@@ -73,7 +62,7 @@ const useHdStore = defineStore(hdStoreLetter, () => {
       const wallet = await Wallet.fromV3(hdStore.value.keystores[0], hdStore.value.password)
       const address = wallet.getAddressString()
       const privateKey = wallet.getPrivateKeyString()
-      const username = hdStore.value.usernameList[0] ?? `Account1`
+      const username = hdStore.value.usernameMap[address] ?? `Account1`
       currentAccount.value = {
         address,
         privateKey,
@@ -105,7 +94,7 @@ const useHdStore = defineStore(hdStoreLetter, () => {
     init,
     initCurrentAccount,
     changeCurrentAccount,
-    addUsernameList,
+    addUsernameMap,
   }
 })
 

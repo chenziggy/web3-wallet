@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import useHdStore from '@/stores/hdStore'
 
+const router = useRouter()
 const store = useHdStore()
 
 const { currentAccount } = storeToRefs(store)
@@ -24,7 +25,7 @@ const show = ref(false)
       {{ username }}
       <div class="i-tabler-chevron-down" />
     </div>
-    <div v-else class="i-tabler-loader animate-spin text-lg" />
+    <div v-else-if="router.currentRoute.value.path !== '/signin'" class="i-tabler-loader animate-spin text-lg" />
     <div class="i-tabler-dots-vertical mx-3 my-1" @click="() => { console.log('click') }" />
     <AccountList v-model="show" />
   </header>

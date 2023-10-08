@@ -68,10 +68,11 @@ async function createWallet(mnemonic: string) {
 
   // 获取钱包
   const wallet = keyPair.getWallet()
+  const address = wallet.getAddressString()
   // 获取地址
   const keystore = await wallet.toV3String(password.value)
+  await store.addUsernameMap(address, 'Account1')
   await store.addKeyStore(keystore)
-  await store.addUsernameList('Account1')
   await store.initCurrentAccount()
   router.push({
     path: '/home',
