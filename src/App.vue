@@ -19,6 +19,14 @@ onBeforeMount(() => {
     }
     else {
       await store.init()
+      web3.eth.getBlockNumber().then(async (latest) => {
+        const res = await web3.eth.getBlock(latest)
+        /* eslint-disable no-console */
+        console.log('🚀 ~ file: App.vue:25 ~ web3.eth.getBlockNumber ~ res:', res.transactions)
+        const transactionHash = res.transactions[0] as string
+        const transtion = await web3.eth.getTransaction(transactionHash)
+        console.log('🚀 ~ file: App.vue:26 ~ web3.eth.getBlockNumber ~ transtion:', transtion)
+      })
     }
   })
 })
